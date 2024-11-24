@@ -42,5 +42,5 @@ class BaseModel:
             my_dict["created_at"] = my_dict["created_at"].isoformat()
         if not isinstance(my_dict["updated_at"], str):
             my_dict["updated_at"] = my_dict["updated_at"].isoformat()
-        
+
         return my_dict
