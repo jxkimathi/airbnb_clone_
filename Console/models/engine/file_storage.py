@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 """Storage File for the data"""
-from models.base_model import BaseModel
 import os
 import json
+from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage:
@@ -35,6 +36,14 @@ class FileStorage:
     def reload(self):
         """Deserealizes the JSON file to __objects"""
         path = FileStorage.__file_path
+        data = FileStorage.__objects
         if os.path.exists(path):
-            with open(path, "r", encoding="utf-8") as file:
-                json.load(file)
+            try:
+                with open(path, "r", encoding="utf-8") as file:
+                    for key, value in json.load(file).items():
+                        if "BaseModel" in key:
+                            data[key] = BaseModel(**value)
+                        if "User" in key:
+                            data[key] = User(**value)
+            except Exception:
+                pass
