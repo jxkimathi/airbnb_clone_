@@ -5,13 +5,22 @@ import cmd
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
 
 
 class HBNBCommand(cmd.Cmd):
     """Class containing the command methods"""
     prompt = "(hbnb) "
 
-    classes = ["BaseModel", "User"]
+    classes = ["BaseModel", "User", "Amenity", "City", "Place", "Review", "State"]
+
+    integers = ["number_rooms", "number_bathrooms", "max_guest", "price_by_night"]
+
+    floaters = ["longitude", "latitude"]
 
     strings = ["name", "email", "password", "first_name", "last_name"]
 
@@ -106,7 +115,16 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
         elif len(args) >= 4:
             key = args[0] + "." + args[1]
-            setattr(storage.all()[key], args[2], args[3])
+            match = args[3]
+            if args[2] in HBNBCommand.strings:
+                setattr(storage.all()[key], args[2], str(match))
+            elif args[2] in HBNBCommand.integers:
+                setattr(storage.all()[key], args[2], int(match))
+            elif args[2] in HBNBCommand.floaters:
+                setattr(storage.all()[key], args[2], float(match))
+            else:
+                setattr(storage.all()[key], args[2], match)
+            storage.save()
 
     def emptyline(self, line):
         """Overrides the emptyline"""
