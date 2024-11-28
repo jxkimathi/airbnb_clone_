@@ -4,26 +4,32 @@
 import cmd
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
     """Class containing the command methods"""
     prompt = "(hbnb) "
 
-    classes = ["BaseModel"]
+    classes = ["BaseModel", "User"]
 
-    strings = ["name"]
+    strings = ["name", "email", "password", "first_name", "last_name"]
 
     def do_create(self, arg):
         """Creates a new instance of BaseModel, saves it (to the JSON file) and prints the id."""
         args = arg.split()
+        classes_models = {
+            "BaseModel": BaseModel,
+            "User": User
+        }
         if len(args) == 0:
             print("** class name missing **")
         elif args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
         else:
-            new_instance = BaseModel()
-            new_instance.save()
+            if args[0] in classes_models:
+                new_instance = classes_models[args[0]]()
+            storage.save()
             print(new_instance.id)
 
     def do_show(self, arg):
@@ -102,15 +108,15 @@ class HBNBCommand(cmd.Cmd):
             key = args[0] + "." + args[1]
             setattr(storage.all()[key], args[2], args[3])
 
-    def emptyline(self):
+    def emptyline(self, line):
         """Overrides the emptyline"""
         pass
 
-    def do_EOF(self):
+    def do_EOF(self, line):
         """Ctrl+D for exiting the program"""
         return True
 
-    def do_quit(self):
+    def do_quit(self, line):
         """Quit command to exit the program"""
         return True
 
